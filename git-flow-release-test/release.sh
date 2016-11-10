@@ -40,7 +40,7 @@ remove_release_branch() {
 
 mvn_release() {
     echo -n "Using maven-release-plugin... "
-    mvn_release_prepare=$(mvn $MVN_ARGS -B release:prepare)
+    mvn_release_prepare=$(mvn $MVN_ARGS -B release:prepare -DdevelopmentVersion=$1 -DreleaseVersion=$2)
     echo -n "'mvn -B release:prepare' "
     mvn_release_perform=$(mvn $MVN_ARGS release:perform)
     echo "'mvn release:perform'"
@@ -70,6 +70,23 @@ merging_to_master() {
     echo "done"
 }
 
+
+display_usage (){
+    echo -e "\nUsage:\n$0 developmentVersion releaseVersion \n"
+}
+
+if [ $# -ne 2 ];then
+  echo "$#"
+  echo "Missing parameters"
+  display_usage
+  exit 1
+fi 
+# check whether user had supplied -h or --help . If yes display usage 
+if [[ ( $# == "--help") ||  $# == "-h" ]];then 
+  display_usage
+  exit 0
+fi
+
 # First get the working directory
 test -n "$MVN_ARGS" && {
     echo "Maven arguments provided : $MVN_ARGS."
@@ -80,20 +97,16 @@ if `git rev-parse 2>/dev/null`; then
     BRANCH_NAME=${BRANCH_NAME##refs/heads/}
     WORKING_DIR=$(git rev-parse --show-toplevel)
     cd $WORKING_DIR
-    CURRENT_VERSION=`mvn ${MVN_ARGS} org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }'`
-    if test "$CURRENT_VERSION" = "${CURRENT_VERSION%-SNAPSHOT}"; then
-        echo "$SELF: version '${CURRENT_VERSION}' specified is not a snapshot"
-    else
-        STABLE_VERSION="${CURRENT_VERSION%-SNAPSHOT}"
-        echo "$STABLE_VERSION"
-        create_release_branch $STABLE_VERSION
-        mvn_release
-        merging_to_develop $STABLE_VERSION
-        merging_to_master $STABLE_VERSION
-        remove_release_branch $STABLE_VERSION
-        # Getting back to where we were
-        git checkout $BRANCH_NAME
-    fi
+    NEXT_WORKING_VERSION="${1}"
+    STABLE_VERSION="${2}"
+    echo "$STABLE_VERSION"
+    create_release_branch $STABLE_VERSION
+    mvn_release $NEXT_WORKING_VERSION $STABLE_VERSION
+    merging_to_develop $STABLE_VERSION
+    merging_to_master $STABLE_VERSION
+    remove_release_branch $STABLE_VERSION
+    # Getting back to where we were
+    git checkout $BRANCH_NAME
 else
     echo "$SELF: you are not in a git directory"
     exit 2
