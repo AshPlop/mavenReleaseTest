@@ -3,7 +3,7 @@
 
   <groupId>com.ash.examples</groupId>
   <artifactId>git-flow-release-test</artifactId>
-  <version>1.0.alpha-SNAPSHOT</version>
+  <version>1.0.2</version>
   <packaging>jar</packaging>
 
   <name>git-flow-release-test</name>
@@ -15,7 +15,7 @@
 
   <scm>
     <connection>scm:git:https://github.com/AshPlop/mavenReleaseTest.git</connection>
-    <tag>HEAD</tag>
+    <tag>v1.0.2</tag>
   </scm>
 
   <dependencies>
