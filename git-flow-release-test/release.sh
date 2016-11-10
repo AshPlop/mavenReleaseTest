@@ -40,9 +40,9 @@ remove_release_branch() {
 
 mvn_release() {
     echo -n "Using maven-release-plugin... "
-    mvn_release_prepare=$(mvn $MVN_ARGS -B release:prepare -DdevelopmentVersion=$1 -DreleaseVersion=$2)
+    mvn $MVN_ARGS -B release:prepare -DdevelopmentVersion=$1 -DreleaseVersion=$2
     echo -n "'mvn -B release:prepare' "
-    mvn_release_perform=$(mvn $MVN_ARGS release:perform -Dgoals=install)
+    mvn $MVN_ARGS release:perform -Dgoals=install
     echo "'mvn release:perform'"
 }
 
