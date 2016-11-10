@@ -51,7 +51,7 @@ merging_to_develop() {
     echo -n "Merging back to develop... "
     RELEASE_BRANCH=$(get_release_branch $1)
     git_co_develop=$(git checkout develop 2>&1)
-    git_merge=$(git merge --no-ff ${RELEASE_BRANCH} 2>&1)
+    git_merge=$(git merge --no-ff ${RELEASE_BRANCH}  -m "[release-plugin] Merge ${RELEASE_BRANCH} into develop" 2>&1)
     echo "done"
 }
 
@@ -63,10 +63,9 @@ merging_to_master() {
     RELEASE_BRANCH=$(get_release_branch $1)
     git_co_release_branch=$(git checkout ${RELEASE_BRANCH})
     git_resete_release_branch=$(git reset --hard HEAD~1)
-    git_merge_ours=$(git merge -s ours master 2>&1)
     git_co_master=$(git checkout master 2>&1)
     # We make the assumption "theirs" is the best
-    git_merge=$(git merge --no-ff ${RELEASE_BRANCH} 2>&1)
+    git_merge=$(git merge --no-ff ${RELEASE_BRANCH} -m "[release-plugin] Merge ${RELEASE_BRANCH} into master" 2>&1)
     echo "done"
 }
 
