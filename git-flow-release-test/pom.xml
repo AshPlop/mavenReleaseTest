@@ -15,7 +15,7 @@
   </properties>
 
   <scm>
-    <connection>scm:githttps://github.com/AshPlop/mavenReleaseTest.git</connection>
+    <connection>scm:git:https://github.com/AshPlop/mavenReleaseTest.git</connection>
     <tag>HEAD</tag>
   </scm>
 
