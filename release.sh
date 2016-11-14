@@ -52,6 +52,7 @@ merging_to_develop() {
     RELEASE_BRANCH=$(get_release_branch $1)
     git_co_develop=$(git checkout develop 2>&1)
     git_merge=$(git merge --no-ff ${RELEASE_BRANCH}  -m "[release-plugin] Merge ${RELEASE_BRANCH} into develop" 2>&1)
+	git_push=$(git push)
     echo "done"
 }
 
@@ -66,6 +67,7 @@ merging_to_master() {
     git_co_master=$(git checkout master 2>&1)
     # We make the assumption "theirs" is the best
     git_merge=$(git merge --no-ff ${RELEASE_BRANCH} -m "[release-plugin] Merge ${RELEASE_BRANCH} into master" 2>&1)
+	git_push=$(git push)
     echo "done"
 }
 
@@ -105,7 +107,8 @@ if `git rev-parse 2>/dev/null`; then
     merging_to_master $STABLE_VERSION
     remove_release_branch $STABLE_VERSION
     # Getting back to where we were
-    git checkout $BRANCH_NAME
+    git_checkout_master=$(git checkout $BRANCH_NAME)
+	git_push_tags=$(git push origin --tags)
 else
     echo "$SELF: you are not in a git directory"
     exit 2
