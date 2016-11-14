@@ -28,7 +28,7 @@ create_release_branch() {
     echo -n "Creating release branch... "
     RELEASE_BRANCH=$(get_release_branch $1)
     echo "$RELEASE_BRANCH"
-    git checkout -b ${RELEASE_BRANCH} master
+    create_branch=$(git checkout -b ${RELEASE_BRANCH} master 2>&1)
 }
 
 remove_release_branch() {
@@ -39,9 +39,9 @@ remove_release_branch() {
 }
 
 mvn_release() {
-    echo -n "Using maven-release-plugin... "
+    echo "Using maven-release-plugin... "
     mvn $MVN_ARGS -B release:prepare -DdevelopmentVersion=$1 -DreleaseVersion=$2
-    echo -n "'mvn -B release:prepare' "
+    echo "'mvn -B release:prepare' "
     mvn $MVN_ARGS release:perform -Dgoals=install
     echo "'mvn release:perform'"
 }
@@ -50,8 +50,8 @@ mvn_release() {
 merging_to_develop() {
     echo -n "Merging back to develop... "
     RELEASE_BRANCH=$(get_release_branch $1)
-    git checkout develop
-    git merge --no-ff ${RELEASE_BRANCH}  -m "[release-plugin] Merge ${RELEASE_BRANCH} into develop"
+    git_co_develop=$(git checkout develop 2>&1)
+    git_merge=$(git merge --no-ff ${RELEASE_BRANCH}  -m "[release-plugin] Merge ${RELEASE_BRANCH} into develop" 2>&1)
     echo "done"
 }
 
@@ -61,11 +61,11 @@ merging_to_develop() {
 merging_to_master() {
     echo -n "Merging back to master... "
     RELEASE_BRANCH=$(get_release_branch $1)
-    git checkout ${RELEASE_BRANCH}
-    git reset --hard HEAD~1
-    git checkout master
+    git_co_release_branch=$(git checkout ${RELEASE_BRANCH} 2>&1)
+    git_resete_release_branch=$(git reset --hard HEAD~1 2>&1)
+    git_co_master=$(git checkout master 2>&1)
     # We make the assumption "theirs" is the best
-    git merge --no-ff ${RELEASE_BRANCH} -m "[release-plugin] Merge ${RELEASE_BRANCH} into master"
+    git_merge=$(git merge --no-ff ${RELEASE_BRANCH} -m "[release-plugin] Merge ${RELEASE_BRANCH} into master" 2>&1)
     echo "done"
 }
 
