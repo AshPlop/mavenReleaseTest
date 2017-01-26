@@ -1,2 +1,2 @@
 # mavenReleaseTest
-plop5
+plop6
